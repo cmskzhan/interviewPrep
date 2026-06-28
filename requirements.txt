@@ -1,0 +1,6 @@
+# Local development dependencies for the Millennium trading demo.
+# Per-service container dependencies live in k8s/<service>/requirements.txt.
+
+fastapi
+uvicorn[standard]
+requests

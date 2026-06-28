@@ -1,0 +1,79 @@
+# strategy-service: ServiceAccount (IRSA) + Deployment + Service
+#
+# Before applying, set two placeholders:
+#   <AWS_ACCOUNT_ID>  and the image registry/tag
+# The IRSA role ARN comes from: terraform output -raw strategy_service_role_arn
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: strategy-service
+  namespace: default
+  annotations:
+    # From: terraform output -raw strategy_service_role_arn
+    eks.amazonaws.com/role-arn: arn:aws:iam::<AWS_ACCOUNT_ID>:role/millenium-dev-strategy-service-role
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strategy-service
+  namespace: default
+  labels:
+    app: strategy-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: strategy-service
+  template:
+    metadata:
+      labels:
+        app: strategy-service
+    spec:
+      serviceAccountName: strategy-service
+      containers:
+        - name: strategy-service
+          image: <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/millenium-strategy-service:latest
+          ports:
+            - containerPort: 8001
+          env:
+            # Injected from the redis-credentials Secret (ElastiCache endpoint)
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: REDIS_URL
+            - name: AWS_REGION
+              value: us-east-1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: strategy-service
+  namespace: default
+spec:
+  selector:
+    app: strategy-service
+  ports:
+    - port: 80
+      targetPort: 8001
+  type: ClusterIP
