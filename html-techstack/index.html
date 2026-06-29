@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millennium Tech Stack Dashboard</title>
+    <meta name="description" content="An interactive showcase of the technology stack powering the Millennium Mock Trading Demo.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121316;
+            --card-bg: rgba(30, 31, 38, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --color-primary: #6366f1; /* Indigo */
+            --color-secondary: #475569; /* Slate Gray */
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle grid background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(148, 163, 184, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.003) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.003) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .tech-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity var(--transition-speed);
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), 0 0 15px var(--accent-glow);
+        }
+
+        .tech-card:hover::before {
+            opacity: 1;
+        }
+
+        .tech-icon {
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform var(--transition-speed);
+            z-index: 1;
+        }
+
+        .tech-card:hover .tech-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .tech-info {
+            z-index: 1;
+        }
+
+        .tech-info h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .tech-info p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Language stats container */
+        .stats-legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            animation: fadeIn 1s ease-out;
+            z-index: 1;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .color-primary-bg {
+            background-color: var(--color-primary);
+        }
+
+        .color-secondary-bg {
+            background-color: var(--color-secondary);
+        }
+
+        /* Bottom Split-Color Bar matching the screenshot exactly */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            display: flex;
+            z-index: 10;
+        }
+
+        .bottom-bar-left {
+            width: 37.5%;
+            background-color: var(--color-primary);
+            transition: width 0.5s ease;
+        }
+
+        .bottom-bar-right {
+            width: 62.5%;
+            background-color: var(--color-secondary);
+            transition: width 0.5s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <header>
+            <h1>Millennium Infrastructure Stack</h1>
+            <p>A performant, distributed architecture designed for high-frequency market data ingestion and automated algorithmic trading.</p>
+        </header>
+
+        <section class="tech-grid">
+            <!-- Market Data Service -->
+            <article class="tech-card">
+                <div class="tech-icon">📊</div>
+                <div class="tech-info">
+                    <h2>Market Data Service</h2>
+                    <p>FastAPI microservice serving real-time and historical OHLCV bar data from Alpaca APIs with an optimized local cache.</p>
+                </div>
+            </article>
+
+            <!-- Strategy Service -->
+            <article class="tech-card">
+                <div class="tech-icon">⚡</div>
+                <div class="tech-info">
+                    <h2>Strategy Engine</h2>
+                    <p>Processes historical bars with custom MinMaxWindow logic, outputting high-fidelity buy/sell signals to SQLite/DynamoDB.</p>
+                </div>
+            </article>
+
+            <!-- Infrastructure & Deployment -->
+            <article class="tech-card">
+                <div class="tech-icon">☁️</div>
+                <div class="tech-info">
+                    <h2>Cloud Native</h2>
+                    <p>Dockerized microservices deployed to AWS EKS (Kubernetes 1.30) with secure IAM pod identities (IRSA).</p>
+                </div>
+            </article>
+        </section>
+
+        <div class="stats-legend">
+            <div class="legend-item">
+                <span class="legend-color color-primary-bg"></span>
+                <span>Active Services (37.5%)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color color-secondary-bg"></span>
+                <span>Planned Frameworks (62.5%)</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Split-Color Bar matching screenshot -->
+    <footer class="bottom-bar">
+        <div class="bottom-bar-left" title="Active Core Stack: 37.5%"></div>
+        <div class="bottom-bar-right" title="Secondary / Planned: 62.5%"></div>
+    </footer>
+
+</body>
+</html>
