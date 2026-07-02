@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How They Connect</title>
+    <meta name="description" content="The app repo feeds the platform repo through the tech spec.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-glow: radial-gradient(circle at center, #3c1e5c 0%, #120c1f 100%);
+            --card-bg: #151518;
+            --box-bg: rgba(29, 36, 52, 0.4);
+            --box-border: rgba(255, 255, 255, 0.15);
+            --box-border-active: rgba(29, 209, 161, 0.6);
+
+            --color-highlight: #f2a104;
+            --color-teal: #1dd1a1;
+            --color-purple: #a78bfa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-glow);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .screen-container {
+            width: 100%;
+            max-width: 1080px;
+            background: var(--card-bg);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            padding: 50px 40px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(124, 58, 237, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screen-container::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Title */
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+        }
+
+        .highlight-orange {
+            color: var(--color-highlight);
+            background: linear-gradient(135deg, #f2a104 0%, #ffc048 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #b3b3b3;
+            font-weight: 500;
+        }
+
+        /* Flow Section */
+        .flow-section {
+            width: 100%;
+            margin-bottom: 30px;
+            z-index: 1;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 16px;
+        }
+
+        .flow-box {
+            flex: 1;
+            max-width: 240px;
+            background: var(--box-bg);
+            border: 1.5px solid var(--box-border);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .flow-box.active {
+            border-color: var(--box-border-active);
+            box-shadow: 0 0 20px rgba(29, 209, 161, 0.15);
+        }
+
+        .flow-box-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .flow-box-label.teal {
+            color: var(--color-teal);
+        }
+
+        .flow-box-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f0f4ff;
+        }
+
+        .flow-box-desc {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .flow-arrow {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            padding: 0 10px;
+        }
+
+        /* Explanation Row */
+        .explanation-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .explain-box {
+            flex: 1;
+            max-width: 240px;
+            background: var(--box-bg);
+            border: 1.5px solid var(--box-border);
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .explain-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .explain-label.teal {
+            color: var(--color-teal);
+        }
+
+        .explain-label.orange {
+            color: var(--color-highlight);
+        }
+
+        .explain-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f0f4ff;
+            margin-bottom: 6px;
+        }
+
+        .explain-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* Divider */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15) 20%, rgba(255, 255, 255, 0.15) 80%, transparent);
+            margin: 30px 0 25px 0;
+            z-index: 1;
+        }
+
+        /* Footer highlights */
+        .footer-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 30px;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .footer-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--color-highlight);
+        }
+
+        .footer-desc {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* Navigation */
+        .nav-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(-4px);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .flow-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .flow-arrow {
+                display: none;
+            }
+
+            .explanation-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="screen-container">
+
+        <!-- Title -->
+        <header class="title-section">
+            <h1>How The Processes <span class="highlight-orange">Connect</span></h1>
+            <p class="subtitle">The app repo feeds the platform repo through the tech spec</p>
+        </header>
+
+        <!-- Flow Section -->
+        <main class="flow-section">
+
+            <!-- Top flow row -->
+            <div class="flow-row">
+                <div class="flow-box">
+                    <span class="flow-box-label">Source of Truth</span>
+                    <span class="flow-box-title">App Repo</span>
+                    <span class="flow-box-desc">Ports, schemas, probes, env vars</span>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box active">
+                    <span class="flow-box-label teal">Bridge</span>
+                    <span class="flow-box-title">Tech Spec</span>
+                    <span class="flow-box-desc">Every infra value documented</span>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">
+                    <span class="flow-box-label orange">You Build</span>
+                    <span class="flow-box-title">Platform Repo</span>
+                    <span class="flow-box-desc">Terraform, Helm, ArgoCD, CI</span>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">
+                    <span class="flow-box-label">Deployed</span>
+                    <span class="flow-box-title">EKS Cluster</span>
+                    <span class="flow-box-desc">Running on AWS</span>
+                </div>
+            </div>
+
+            <!-- Explanation row -->
+            <div class="explanation-row">
+                <div class="explain-box">
+                    <span class="explain-label">App Provides</span>
+                    <span class="explain-title">Requirements</span>
+                    <span class="explain-desc">What the app needs to run</span>
+                </div>
+                <div class="explain-box">
+                    <span class="explain-label teal">Spec Captures</span>
+                    <span class="explain-title">Values</span>
+                    <span class="explain-desc">CIDRs, ports, instance types</span>
+                </div>
+                <div class="explain-box">
+                    <span class="explain-label orange">Platform Builds</span>
+                    <span class="explain-title">Infrastructure</span>
+                    <span class="explain-desc">Terraform + Helm + ArgoCD</span>
+                </div>
+                <div class="explain-box">
+                    <span class="explain-label">Cluster Runs</span>
+                    <span class="explain-title">Services</span>
+                    <span class="explain-desc">8 services in dev + prod</span>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Footer highlights -->
+        <footer class="footer-grid">
+            <div class="footer-item">
+                <span class="footer-title">App Tells You What</span>
+                <span class="footer-desc">Read the source to understand requirements</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-title">Spec Captures Why</span>
+                <span class="footer-desc">Every value documented and traceable</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-title">Platform Starts Empty</span>
+                <span class="footer-desc">You build everything from scratch</span>
+            </div>
+        </footer>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <a href="page6.html" class="nav-btn">← Back</a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

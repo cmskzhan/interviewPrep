@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Mission</title>
+    <meta name="description"
+        content="Take 8 microservices from Docker Compose to production on AWS — the complete DevOps roadmap.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-glow: radial-gradient(circle at center, #3c1e5c 0%, #120c1f 100%);
+            --card-bg: #151518;
+            --row-bg: rgba(255, 255, 255, 0.04);
+            --row-border: rgba(255, 255, 255, 0.09);
+            --tag-bg: rgba(29, 36, 52, 0.6);
+            --tag-border: #2e3c5a;
+            --tag-text: #b8c7e0;
+            --tag-hover-bg: rgba(99, 102, 241, 0.15);
+            --tag-hover-border: #6366f1;
+            --tag-hover-text: #e0e7ff;
+
+            --color-highlight: #f2a104;
+            --color-teal: #1dd1a1;
+            --color-purple: #a78bfa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-glow);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .screen-container {
+            width: 100%;
+            max-width: 1080px;
+            background: var(--card-bg);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            padding: 50px 40px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(124, 58, 237, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screen-container::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Title */
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+        }
+
+        .highlight-orange {
+            color: var(--color-highlight);
+            background: linear-gradient(135deg, #f2a104 0%, #ffc048 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #b3b3b3;
+            font-weight: 500;
+        }
+
+        /* Mission Steps */
+        .mission-steps {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        .mission-step {
+            display: flex;
+            align-items: center;
+            background: var(--row-bg);
+            border: 1px solid var(--row-border);
+            border-radius: 12px;
+            padding: 18px 24px;
+            gap: 20px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .mission-step:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .step-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--color-highlight);
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .step-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .step-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #f0f4ff;
+        }
+
+        .step-desc {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .step-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            background-color: var(--tag-bg);
+            border: 1.5px solid var(--tag-border);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--tag-text);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tech-tag:hover {
+            transform: translateY(-2px);
+            background-color: var(--tag-hover-bg);
+            border-color: var(--tag-hover-border);
+            color: var(--tag-hover-text);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Divider */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15) 20%, rgba(255, 255, 255, 0.15) 80%, transparent);
+            margin-bottom: 25px;
+            z-index: 1;
+        }
+
+        /* Footer highlights */
+        .footer-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 30px;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .footer-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--color-teal);
+        }
+
+        .footer-desc {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* Navigation */
+        .nav-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(-4px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .screen-container {
+                padding: 35px 20px;
+            }
+
+            .mission-step {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .step-tags {
+                width: 100%;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="screen-container">
+
+        <!-- Title -->
+        <header class="title-section">
+            <h1>DevOps <span class="highlight-orange">Mission</span></h1>
+            <p class="subtitle">Take 8 microservices from Docker Compose to EKS production on AWS</p>
+        </header>
+
+        <!-- Mission Steps -->
+        <main class="mission-steps">
+
+            <div class="mission-step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <span class="step-title">Build the AWS Infrastructure</span>
+                    <span class="step-desc">VPC, EKS cluster, RDS database, ECR registry, DNS, secrets</span>
+                </div>
+                <div class="step-tags">
+                    <button class="tech-tag">Terraform</button>
+                </div>
+            </div>
+
+            <div class="mission-step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <span class="step-title">Set Up Deployment Pipelines</span>
+                    <span class="step-desc">CI builds images and pushes to ECR, GitOps deploys to cluster</span>
+                </div>
+                <div class="step-tags">
+                    <button class="tech-tag">GitHub Actions</button>
+                    <button class="tech-tag">ArgoCD</button>
+                </div>
+            </div>
+
+            <div class="mission-step">
+                <span class="step-number">3</span>
+                <div class="step-content">
+                    <span class="step-title">Get the App Running in Dev and Prod</span>
+                    <span class="step-desc">Dev auto-syncs on merge, Prod requires manual approval</span>
+                </div>
+                <div class="step-tags">
+                    <button class="tech-tag">Helm</button>
+                    <button class="tech-tag">ArgoCD</button>
+                </div>
+            </div>
+
+            <div class="mission-step">
+                <span class="step-number">4</span>
+                <div class="step-content">
+                    <span class="step-title">Establish Observability</span>
+                    <span class="step-desc">Metrics, logs, and distributed tracing across all 8 services</span>
+                </div>
+                <div class="step-tags">
+                    <button class="tech-tag">Prometheus</button>
+                    <button class="tech-tag">Grafana</button>
+                    <button class="tech-tag">FluentBit</button>
+                    <button class="tech-tag">Zipkin</button>
+                </div>
+            </div>
+
+            <div class="mission-step">
+                <span class="step-number">5</span>
+                <div class="step-content">
+                    <span class="step-title">Security and Operational Readiness</span>
+                    <span class="step-desc">IAM, RBAC, network policies, image and Terraform scanning</span>
+                </div>
+                <div class="step-tags">
+                    <button class="tech-tag">Checkov</button>
+                    <button class="tech-tag">Trivy</button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Footer highlights -->
+        <footer class="footer-grid">
+            <div class="footer-item">
+                <span class="footer-title">End to End</span>
+                <span class="footer-desc">Infra + deploy + monitor + secure</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-title">Two Environments</span>
+                <span class="footer-desc">Dev (auto) + Prod (manual approval)</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-title">All Terraform</span>
+                <span class="footer-desc">Modular, repeatable, version-controlled</span>
+            </div>
+        </footer>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <a href="page4.html" class="nav-btn">← Back</a>
+            <a href="page6.html" class="nav-btn">Next →</a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
