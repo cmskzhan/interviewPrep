@@ -1,6 +1,6 @@
 # ── Cluster IAM role ──────────────────────────────────────────────────────
 resource "aws_iam_role" "eks_cluster" {
-  name = "${local.name}-eks-cluster-role"
+  name = "${var.name}-eks-cluster-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -11,7 +11,7 @@ resource "aws_iam_role" "eks_cluster" {
     }]
   })
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
@@ -21,23 +21,23 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
 
 # ── EKS Cluster ───────────────────────────────────────────────────────────
 resource "aws_eks_cluster" "main" {
-  name     = "${local.name}-cluster"
+  name     = "${var.name}-cluster"
   version  = var.eks_cluster_version
   role_arn = aws_iam_role.eks_cluster.arn
 
   vpc_config {
-    subnet_ids              = aws_subnet.private[*].id
+    subnet_ids              = var.private_subnet_ids
     endpoint_private_access = true
     endpoint_public_access  = true
   }
 
-  tags       = local.tags
+  tags       = var.tags
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }
 
 # ── Node group IAM role ───────────────────────────────────────────────────
 resource "aws_iam_role" "eks_nodes" {
-  name = "${local.name}-eks-nodes-role"
+  name = "${var.name}-eks-nodes-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -48,7 +48,7 @@ resource "aws_iam_role" "eks_nodes" {
     }]
   })
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
@@ -69,26 +69,42 @@ resource "aws_iam_role_policy_attachment" "eks_ecr_readonly" {
 # ── Managed node group ────────────────────────────────────────────────────
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${local.name}-nodes"
+  node_group_name = "${var.name}-nodes"
   node_role_arn   = aws_iam_role.eks_nodes.arn
-  subnet_ids      = aws_subnet.private[*].id
+  subnet_ids      = var.private_subnet_ids
   instance_types  = var.eks_node_instance_types
 
   scaling_config {
-    desired_size = var.eks_node_desired_size *2
+    desired_size = var.eks_node_desired_size
     min_size     = var.eks_node_min_size
-    max_size     = var.eks_node_max_size * 2
+    max_size     = var.eks_node_max_size
   }
 
   update_config {
     max_unavailable = 1
   }
 
-  tags = local.tags
+  tags = var.tags
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_worker_node_policy,
     aws_iam_role_policy_attachment.eks_cni_policy,
     aws_iam_role_policy_attachment.eks_ecr_readonly,
   ]
+}
+
+# ── OIDC provider — IRSA (IAM Roles for Service Accounts) ─────────────────
+# NOTE: Service-level IRSA roles (market-data-service, strategy-service, etc.)
+# live in iam.tf at the env root for now. As the number of services grows,
+# this should be extracted into a dedicated modules/iam module that accepts a
+# map of service accounts → IAM policy documents.
+data "tls_certificate" "eks" {
+  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
+}
+
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.main.identity[0].oidc[0].issuer
+  tags            = var.tags
 }
