@@ -317,7 +317,46 @@ Suggested fix: install the AWS Load Balancer Controller (IRSA role + Helm chart)
 
 - The Alpaca API keys in `main.py` are for the demo only and are overridable via
   the `ALPACA_API_KEY` / `ALPACA_API_SECRET` environment variables. Rotate and move
-  to a Secret before any real deployment.
+  to a Secret before any real deployment. This would involve
+  -- 1. Using the KV v2 secrets engine:
+
+    ```
+    vault kv put secret/millenium/alpaca \
+  api_key="<new-key>" \
+  api_secret="<new-secret>"
+  ```
+  2. Add client library by adding `hvac`  (the official Vault Python client) to requirements.txt
+  3. add a Vault helper to main.py
+
+```
+import os
+import hvac
+
+def get_alpaca_credentials() -> tuple[str, str]:
+    client = hvac.Client(
+        url=os.environ["VAULT_ADDR"],          # e.g. https://vault.internal:8200
+        token=os.environ.get("VAULT_TOKEN"),   # omit if using k8s auth (below)
+    )
+
+    if not client.is_authenticated():
+        raise RuntimeError("Vault authentication failed")
+
+    secret = client.secrets.kv.v2.read_secret_version(
+        mount_point="secret",
+        path="millenium/alpaca",
+    )
+    data = secret["data"]["data"]
+    return data["api_key"], data["api_secret"]
+  ```
+4. Authenticate the pods (Kubernetes)
+use either k8s auth
+```
+jwt = open("/var/run/secrets/kubernetes.io/serviceaccount/token").read()
+client.auth.kubernetes.login(role="millenium", jwt=jwt)
+```
+or a vault agent injector/CSI, which is a sidecar injects the secret as a file or env. 
+
+
 - Pods authenticate to DynamoDB and ElastiCache via IRSA — no static AWS
   credentials are baked into images.
 - Local dev uses an in-process cache (`cache.py`), which would be per-pod and
